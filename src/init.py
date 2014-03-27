@@ -348,6 +348,7 @@ def saveActivity(update):
     else:
         actual_value = 0
     actual_text = "actual = "+str(actual_value)
+    data_modif_text = "data_modif = datetime('now')"
 
     emp_value = "null"
     new_emp_id = _dialog.findChild(QLineEdit, "new_emp_id")
@@ -362,7 +363,7 @@ def saveActivity(update):
     # Create SQL
     sql = "UPDATE activitat"
     sql+= " SET "+getStringValue("nif")+", "+getStringValue("rao_social")+", "+getStringValue("nom_comercial")+", "+getStringValue("descripcio")+", "+getStringValue("nom_contacte")+", "+getStringValue("telefon")+", "+getStringValue("mail")+", "+getStringValue("superficie")+", "+getStringValue("exp_relacionats")+", "+dllic_text+", "+dbaixa_text+", "+dci_text+", "+dcp_text
-    sql+= ", "+getSelectedItem("estat_legal_id")+", "+getSelectedItem("tipus_act_id")+", "+getSelectedItem("marc_legal_id")+", "+getSelectedItem("clas_legal_id")+", "+getStringValue("codi_legal")+", "+getStringValue("observacions_act")+", "+getStringValue("num_exp")+", "+actual_text	
+    sql+= ", "+getSelectedItem("estat_legal_id")+", "+getSelectedItem("tipus_act_id")+", "+getSelectedItem("marc_legal_id")+", "+getSelectedItem("clas_legal_id")+", "+getStringValue("codi_legal")+", "+getStringValue("observacions_act")+", "+getStringValue("num_exp")+", "+actual_text+", "+data_modif_text
     # Update location?
     if new_emp_text:
         msgBox = QMessageBox()
