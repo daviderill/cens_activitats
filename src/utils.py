@@ -6,16 +6,19 @@ from PyQt4.QtGui import *
 # Utility funcions	
 #
 def setDialog(p_dialog):
+    
     global _dialog
     _dialog = p_dialog
 
 
 def setCursor(p_cursor):
+    
     global cursor
     cursor = p_cursor
 
 
 def fillComboBox(elem, sql):
+    
     elem.clear()	
     elem.addItem("")	
     cursor.execute(sql)
@@ -25,6 +28,7 @@ def fillComboBox(elem, sql):
 
 
 def setSelectedItem(combo, sql):
+    
     cursor.execute(sql)
     row = cursor.fetchone()
     if not row:
@@ -36,6 +40,7 @@ def setSelectedItem(combo, sql):
 
 
 def getSelectedItem(param_elem):
+    
     elem = _dialog.findChild(QComboBox, param_elem)
     if not elem.currentText():
         elem_text = "null"
@@ -46,6 +51,7 @@ def getSelectedItem(param_elem):
 
 
 def getSelectedItem2(param_elem):
+    
     elem = _dialog.findChild(QComboBox, param_elem)
     if not elem.currentText():
         elem_text = "null"
@@ -55,6 +61,7 @@ def getSelectedItem2(param_elem):
 
 
 def getValue(param_elem):
+    
     elem = _dialog.findChild(QLineEdit, param_elem)
     if elem:	
         if elem.text():
@@ -67,6 +74,7 @@ def getValue(param_elem):
 
 
 def getValue2(param_elem):
+    
     elem = _dialog.findChild(QLineEdit, param_elem)
     if elem:	
         if elem.text():
@@ -75,51 +83,55 @@ def getValue2(param_elem):
             elem_text = "null"
     else:
         elem_text = "null"
-    return elem_textcx
+    return elem_text
 
 
 def getStringValue(param_elem):
+    
     elem = _dialog.findChild(QLineEdit, param_elem)
     if elem:	
-        if elem.text():
-            elem_text = param_elem + " = '"+elem.text().replace("'", "''")+"'"
+        if (not elem.text() or elem.text().lower() == "null"):
+            elem_text = param_elem + " = null"    
         else:
-            elem_text = param_elem + " = null"		
+            elem_text = param_elem + " = '"+elem.text().replace("'", "''")+"'"
     else:
         elem = _dialog.findChild(QTextEdit, param_elem)	
         if elem:	
-            if elem.toPlainText():
-                elem_text = param_elem + " = '"+elem.toPlainText().replace("'", "''")+"'"
+            if (not elem.toPlainText() or elem.toPlainText().lower() == "null"):  
+                elem_text = param_elem + " = null"    
             else:
-                elem_text = param_elem + " = null"	
+                elem_text = param_elem + " = '"+elem.toPlainText().replace("'", "''")+"'"
         else:				
             elem_text = param_elem + " = null"
     return elem_text
 
 
 def getStringValue2(param_elem):
+    
     elem = _dialog.findChild(QLineEdit, param_elem)
     if elem:	
-        if elem.text():
-            elem_text = "'"+elem.text().replace("'", "''")+"'"
-        else:
+        if (not elem.text() or elem.text().lower() == "null"):
             elem_text = "null"
+        else:
+            elem_text = "'"+elem.text().replace("'", "''")+"'"
     else:
         elem = _dialog.findChild(QTextEdit, param_elem)	
         if elem:	
-            if elem.toPlainText():
-                elem_text = "'"+elem.toPlainText().replace("'", "''")+"'"
+            if (not elem.toPlainText() or elem.toPlainText().lower() == "null"):                
+                elem_text = "null"    
             else:
-                elem_text = "null"	
+                elem_text = "'"+elem.toPlainText().replace("'", "''")+"'"
         else:				
             elem_text = "null"
     return elem_text	
 
 
 def isNull(param_elem):
+    
     elem = _dialog.findChild(QLineEdit, param_elem)
     empty = True	
     if elem:	
         if elem.text():
             empty = False
     return empty	
+

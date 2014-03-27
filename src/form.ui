@@ -183,27 +183,6 @@
    <property name="title">
     <string>EMPLAÇAMENT</string>
    </property>
-   <widget class="QPlainTextEdit" name="observacions">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>140</y>
-      <width>351</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Verdana</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="locale">
-     <locale language="Catalan" country="Spain"/>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="adress">
     <property name="enabled">
      <bool>true</bool>
@@ -418,6 +397,22 @@
     </property>
     <property name="text">
      <string>Adreça:</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="observacions">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>140</y>
+      <width>351</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
    </widget>
   </widget>
@@ -957,6 +952,9 @@
    </widget>
   </widget>
   <widget class="QGroupBox" name="gb_marc_legal">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>530</x>

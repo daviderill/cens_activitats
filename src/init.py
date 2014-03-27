@@ -11,7 +11,7 @@ from photo_dialog import PhotoDialog
 def formOpen(dialog,layerid,featureid):
 
     global _dialog, id, cbo_marc_legal, lbl_info
-    global db_file, photo_folder
+    global db_file, photo_folder, emp_updating
 
     # Set global variables	
     _dialog = dialog
@@ -21,12 +21,18 @@ def formOpen(dialog,layerid,featureid):
     lbl_info = _dialog.findChild(QLabel, "lbl_info")		
     current_path = os.path.dirname(os.path.abspath(__file__))
     
+    # Enable modification of activities, only if location is already created
+    if id.text():
+        emp_updating = True    
+    else:
+        emp_updating = False
+    
     # Get current path
     db_file = current_path+"/cens_2013.sqlite"	
     photo_folder = current_path+"/fotos/"		
 
     # Wire up our own signals
-    cbo_marc_legal.currentIndexChanged.connect(marcLegalChanged)		
+    cbo_marc_legal.currentIndexChanged.connect(marcLegalChanged)		      
     _dialog.findChild(QPushButton, "previous").clicked.connect(previousRecord)	
     _dialog.findChild(QPushButton, "next").clicked.connect(nextRecord)	
     _dialog.findChild(QPushButton, "create_act").clicked.connect(createActivity)	
@@ -34,7 +40,7 @@ def formOpen(dialog,layerid,featureid):
     _dialog.findChild(QPushButton, "save_act").clicked.connect(saveClicked)	
     _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)	
     _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)		
-    _dialog.findChild(QPushButton, "close").clicked.connect(_dialog.reject)	
+    _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)	
     
     # Connect to Database
     connectDb()
@@ -64,6 +70,12 @@ def disableControls():
 
     _dialog.findChild(QLineEdit, "id").setEnabled(False)
     _dialog.findChild(QLineEdit, "act_id").setEnabled(False)	
+    _dialog.findChild(QGroupBox, "gb_activitat").setEnabled(emp_updating)       
+    _dialog.findChild(QGroupBox, "gb_marc_legal").setEnabled(emp_updating)          
+    _dialog.findChild(QPushButton, "create_act").setEnabled(emp_updating)      
+    _dialog.findChild(QPushButton, "duplicate_act").setEnabled(emp_updating)   
+    _dialog.findChild(QPushButton, "del_act").setEnabled(emp_updating)  
+    _dialog.findChild(QPushButton, "photo_act").setEnabled(emp_updating)        
 
 
 # Load combos from domain tables	
@@ -125,7 +137,6 @@ def marcLegalChanged():
     else:
         # Get only clas_legal records related to selected marc_legal. Table: ta_marc_x_clas
         sql = "SELECT clas_id FROM ta_marc_x_clas WHERE marc_id = '"+marc_legal+"' ORDER BY clas_id"
-    #print sql		
     fillComboBox(_dialog.findChild(QComboBox, "clas_legal_id"), sql)	
 
 
@@ -200,6 +211,7 @@ def setWidgetsActivity(row):
 
 
 def setTextEdit(row, index, field):
+    
     aux = _dialog.findChild(QTextEdit, field)   
     if not aux:
         print "field not found: " + field	
@@ -210,7 +222,9 @@ def setTextEdit(row, index, field):
     else:
         aux.setText(value) 		
 
+
 def setField(row, index, field):
+    
     aux = _dialog.findChild(QLineEdit, field)   
     if not aux:
         print "field not found: " + field	
@@ -223,6 +237,7 @@ def setField(row, index, field):
 
 
 def setCombo(row, index, field):
+    
     aux = _dialog.findChild(QComboBox, field)   
     if not aux:
         print "combo not found: " + field	
@@ -232,6 +247,7 @@ def setCombo(row, index, field):
 
 
 def setDate(row, index, field):
+    
     aux = _dialog.findChild(QDateEdit, field)   
     if not aux:
         print "date not found: " + field	
@@ -305,14 +321,13 @@ def deleteActivity():
         updateTotals()	
 
 
-def saveClicked():
-    saveActivity(True)
-
-
 # Save data from Tab 'Activities' into Database
 def saveActivity(update):
  
     act_id = _dialog.findChild(QLineEdit, "act_id")	
+    if not act_id.text():
+        return
+    
     dllic = _dialog.findChild(QDateEdit, "data_llicencia")	
     dllic_value = dllic.date().toString("yyyy-MM-dd")
     dllic_text = "data_llicencia = '"+dllic_value+"'"	
@@ -334,38 +349,56 @@ def saveActivity(update):
         actual_value = 0
     actual_text = "actual = "+str(actual_value)
 
-    #emplacament_text = "emplacament_id = null"	
-    emplacament_value = "null"
+    emp_value = "null"
     new_emp_id = _dialog.findChild(QLineEdit, "new_emp_id")
     new_emp_text = ""
     if new_emp_id.text():
         new_emp_value = "'"+new_emp_id.text()+"'"        
         new_emp_text = "emplacament_id = "+new_emp_value  
-    new_emp_id.setEnabled(True) 
-    new_emp_id.setText("")
     emp_id = _dialog.findChild(QLineEdit, "id")	
     if emp_id.text():
-        emplacament_value = "'"+emp_id.text()+"'"		
-        #emplacament_text = "emplacament_id = "+emplacament_value
+        emp_value = emp_id.text()		
 
     # Create SQL
     sql = "UPDATE activitat"
     sql+= " SET "+getStringValue("nif")+", "+getStringValue("rao_social")+", "+getStringValue("nom_comercial")+", "+getStringValue("descripcio")+", "+getStringValue("nom_contacte")+", "+getStringValue("telefon")+", "+getStringValue("mail")+", "+getStringValue("superficie")+", "+getStringValue("exp_relacionats")+", "+dllic_text+", "+dbaixa_text+", "+dci_text+", "+dcp_text
     sql+= ", "+getSelectedItem("estat_legal_id")+", "+getSelectedItem("tipus_act_id")+", "+getSelectedItem("marc_legal_id")+", "+getSelectedItem("clas_legal_id")+", "+getStringValue("codi_legal")+", "+getStringValue("observacions_act")+", "+getStringValue("num_exp")+", "+actual_text	
+    # Update location?
     if new_emp_text:
-        sql+= ", "+new_emp_text
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(u"Modificar emplaçament")    
+        msgBox.setText(u"Està segur que desitja modificar l'emplaçament de l'activitat?")
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
+        resp = msgBox.exec_()
+        if (resp == QMessageBox.Yes):        
+            sql+= ", "+new_emp_text
     sql+= " WHERE id = "+act_id.text()
     #print sql		
     cursor.execute(sql)
+    
     if cursor.rowcount == 0:	
         sql = "INSERT INTO activitat (emplacament_id, nif, rao_social, nom_comercial, descripcio, nom_contacte, telefon, mail, superficie, exp_relacionats, data_llicencia, data_baixa, data_control_inicial, data_control_periodic, estat_legal_id, tipus_act_id, marc_legal_id, clas_legal_id, codi_legal, observacions_act, num_exp, actual)"
-        sql+= " VALUES ("+emplacament_value+", "+getStringValue2("nif")+", "+getStringValue2("rao_social")+", "+getStringValue2("nom_comercial")+", "+getStringValue2("descripcio")+", "+getStringValue2("nom_contacte")+", "+getStringValue2("telefon")+", "+getStringValue2("mail")+", "+getStringValue2("superficie")+", "+getStringValue2("exp_relacionats")+", '"+dllic_value+"', '"+dbaixa_value+"', '"+dci_value+"', '"+dcp_value+"', "+getSelectedItem2("estat_legal_id")+", "+getSelectedItem2("tipus_act_id")+", "+getSelectedItem2("marc_legal_id")+", "+getSelectedItem2("clas_legal_id")+", "+getStringValue2("codi_legal")+", "+getStringValue2("observacions_act")+", "+getStringValue2("num_exp")+", "+str(actual_value)+")"			
+        sql+= " VALUES ("+emp_value+", "+getStringValue2("nif")+", "+getStringValue2("rao_social")+", "+getStringValue2("nom_comercial")+", "+getStringValue2("descripcio")+", "+getStringValue2("nom_contacte")+", "+getStringValue2("telefon")+", "+getStringValue2("mail")+", "+getStringValue2("superficie")+", "+getStringValue2("exp_relacionats")+", '"+dllic_value+"', '"+dbaixa_value+"', '"+dci_value+"', '"+dcp_value+"', "+getSelectedItem2("estat_legal_id")+", "+getSelectedItem2("tipus_act_id")+", "+getSelectedItem2("marc_legal_id")+", "+getSelectedItem2("clas_legal_id")+", "+getStringValue2("codi_legal")+", "+getStringValue2("observacions_act")+", "+getStringValue2("num_exp")+", "+str(actual_value)+")"			
         #print sql				
         cursor.execute(sql)		
     conn.commit()	
 
+    new_emp_id.setEnabled(True) 
+    new_emp_id.setText("")
+    
     if (update):	
         updateTotals()	
+    
+    
+def saveLocation():
+    
+    emp_id = _dialog.findChild(QLineEdit, "id")        
+    sql = "UPDATE emplacament"
+    sql+= " SET "+getStringValue("adress")+", "+getStringValue("refcat_all")+", "+getStringValue("titular")+", "+getStringValue("observacions")    
+    sql+= " WHERE id = "+emp_id.text()       
+    cursor.execute(sql)
+    conn.commit()    
 
 
 def viewPhoto():
@@ -377,8 +410,14 @@ def viewPhoto():
     photo_dialog.exec_()	
 
 
-def saveFeature():
+def saveClicked():
+    if emp_updating:
+        saveLocation()
+        saveActivity(True)
+    else:
+        _dialog.accept()        
     
-    saveActivity(False)
-    # Return the form as accepted to QGIS	
-    _dialog.accept()
+    
+def closeForm():
+    _dialog.reject()  
+    
