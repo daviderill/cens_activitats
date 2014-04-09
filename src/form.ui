@@ -1357,6 +1357,16 @@
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="minimumDateTime">
+     <datetime>
+      <hour>0</hour>
+      <minute>0</minute>
+      <second>0</second>
+      <year>1900</year>
+      <month>1</month>
+      <day>1</day>
+     </datetime>
+    </property>
     <property name="displayFormat">
      <string>dd/MM/yyyy</string>
     </property>
@@ -1397,7 +1407,7 @@
       <hour>0</hour>
       <minute>0</minute>
       <second>0</second>
-      <year>1950</year>
+      <year>1900</year>
       <month>1</month>
       <day>1</day>
      </datetime>
@@ -1492,6 +1502,16 @@
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="minimumDateTime">
+     <datetime>
+      <hour>0</hour>
+      <minute>0</minute>
+      <second>0</second>
+      <year>1900</year>
+      <month>1</month>
+      <day>1</day>
+     </datetime>
+    </property>
     <property name="displayFormat">
      <string>dd/MM/yyyy</string>
     </property>
@@ -1575,6 +1595,16 @@
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="minimumDateTime">
+     <datetime>
+      <hour>0</hour>
+      <minute>0</minute>
+      <second>0</second>
+      <year>1900</year>
+      <month>1</month>
+      <day>1</day>
+     </datetime>
+    </property>
     <property name="displayFormat">
      <string>dd/MM/yyyy</string>
     </property>
@@ -1603,6 +1633,114 @@
       <weight>50</weight>
       <bold>false</bold>
      </font>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="data_llicencia_null">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>132</x>
+      <y>232</y>
+      <width>80</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Verdana</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="locale">
+     <locale language="Catalan" country="Spain"/>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="data_control_inicial_null">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>132</x>
+      <y>262</y>
+      <width>80</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Verdana</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="locale">
+     <locale language="Catalan" country="Spain"/>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="data_control_periodic_null">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>402</x>
+      <y>262</y>
+      <width>80</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Verdana</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="locale">
+     <locale language="Catalan" country="Spain"/>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="data_baixa_null">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>402</x>
+      <y>232</y>
+      <width>80</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Verdana</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="locale">
+     <locale language="Catalan" country="Spain"/>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
@@ -1674,6 +1812,29 @@
    </property>
    <property name="text">
     <string>Eliminar</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="report">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>470</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Verdana</family>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="locale">
+    <locale language="Catalan" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Informe</string>
    </property>
   </widget>
  </widget>

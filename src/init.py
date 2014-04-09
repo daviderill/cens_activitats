@@ -12,6 +12,7 @@ def formOpen(dialog,layerid,featureid):
 
     global _dialog, id, cbo_marc_legal, lbl_info
     global db_file, photo_folder, emp_updating
+    global current_path
 
     # Set global variables	
     _dialog = dialog
@@ -39,8 +40,12 @@ def formOpen(dialog,layerid,featureid):
     _dialog.findChild(QPushButton, "duplicate_act").clicked.connect(duplicateActivity)		
     _dialog.findChild(QPushButton, "save_act").clicked.connect(saveClicked)	
     _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)	
-    _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)		
+    _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)	
     _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)	
+    _dialog.findChild(QDateEdit, "data_llicencia").dateChanged.connect(dateChanged)    
+    _dialog.findChild(QDateEdit, "data_baixa").dateChanged.connect(dateChanged)    
+    _dialog.findChild(QDateEdit, "data_control_inicial").dateChanged.connect(dateChanged)    
+    _dialog.findChild(QDateEdit, "data_control_periodic").dateChanged.connect(dateChanged)    
     
     # Connect to Database
     connectDb()
@@ -75,7 +80,8 @@ def disableControls():
     _dialog.findChild(QPushButton, "create_act").setEnabled(emp_updating)      
     _dialog.findChild(QPushButton, "duplicate_act").setEnabled(emp_updating)   
     _dialog.findChild(QPushButton, "del_act").setEnabled(emp_updating)  
-    _dialog.findChild(QPushButton, "photo_act").setEnabled(emp_updating)        
+    _dialog.findChild(QPushButton, "photo_act").setEnabled(emp_updating)   
+    _dialog.findChild(QPushButton, "report").setVisible(False)   
 
 
 # Load combos from domain tables	
@@ -251,14 +257,29 @@ def setDate(row, index, field):
     aux = _dialog.findChild(QDateEdit, field)   
     if not aux:
         print "date not found: " + field	
-        return	
-    if row[index]:	
+        return	 
+    if row[index] and row[index] != "1900-01-01":	
         date = datetime.strptime(row[index], "%Y-%m-%d")			
+        widget_line_visible = False
     else:
-        date = datetime.strptime("1900-01-01", "%Y-%m-%d")							
-    aux.setDate(date);		
+        date = datetime.strptime("1900-01-01", "%Y-%m-%d")    				
+        widget_line_visible = True        
+    aux.setDate(date);	
+    
+    widget_line = _dialog.findChild(QLineEdit, field+"_null") 
+    if widget_line:
+        #print field + ": " + str(widget_line_visible) 
+        widget_line.setVisible(widget_line_visible)      
 
 
+def dateChanged():
+    
+    widget_date = _dialog.sender()
+    widget_line = _dialog.findChild(QLineEdit, widget_date.objectName()+"_null")    
+    if widget_line:
+        widget_line.setVisible(not widget_date.text())   
+    
+    
 def createActivity():
 
     lbl_info.setText("Creant activitat...")	
@@ -409,7 +430,7 @@ def viewPhoto():
     photo_dialog = PhotoDialog()
     photo_dialog.setPhoto(path)    	
     photo_dialog.exec_()	
-
+     
 
 def saveClicked():
     if emp_updating:
