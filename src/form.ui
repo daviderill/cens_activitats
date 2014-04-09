@@ -981,7 +981,7 @@
      <rect>
       <x>130</x>
       <y>110</y>
-      <width>121</width>
+      <width>111</width>
       <height>22</height>
      </rect>
     </property>
@@ -1077,7 +1077,7 @@
      <rect>
       <x>130</x>
       <y>140</y>
-      <width>121</width>
+      <width>111</width>
       <height>22</height>
      </rect>
     </property>
@@ -1272,7 +1272,7 @@
      <rect>
       <x>130</x>
       <y>200</y>
-      <width>121</width>
+      <width>111</width>
       <height>20</height>
      </rect>
     </property>
@@ -1336,103 +1336,6 @@
      <string>Data llicència:</string>
     </property>
    </widget>
-   <widget class="QDateEdit" name="data_llicencia">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>230</y>
-      <width>121</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Verdana</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>true</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="locale">
-     <locale language="Catalan" country="Spain"/>
-    </property>
-    <property name="minimumDateTime">
-     <datetime>
-      <hour>0</hour>
-      <minute>0</minute>
-      <second>0</second>
-      <year>1900</year>
-      <month>1</month>
-      <day>1</day>
-     </datetime>
-    </property>
-    <property name="displayFormat">
-     <string>dd/MM/yyyy</string>
-    </property>
-    <property name="calendarPopup">
-     <bool>false</bool>
-    </property>
-    <property name="date">
-     <date>
-      <year>1999</year>
-      <month>1</month>
-      <day>1</day>
-     </date>
-    </property>
-   </widget>
-   <widget class="QDateEdit" name="data_control_inicial">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>260</y>
-      <width>121</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Verdana</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>true</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="locale">
-     <locale language="Catalan" country="Spain"/>
-    </property>
-    <property name="minimumDateTime">
-     <datetime>
-      <hour>0</hour>
-      <minute>0</minute>
-      <second>0</second>
-      <year>1900</year>
-      <month>1</month>
-      <day>1</day>
-     </datetime>
-    </property>
-    <property name="maximumDate">
-     <date>
-      <year>2099</year>
-      <month>12</month>
-      <day>31</day>
-     </date>
-    </property>
-    <property name="displayFormat">
-     <string>dd/MM/yyyy</string>
-    </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
-    </property>
-    <property name="date">
-     <date>
-      <year>1999</year>
-      <month>1</month>
-      <day>1</day>
-     </date>
-    </property>
-   </widget>
    <widget class="QLabel" name="eje_id_label_15">
     <property name="geometry">
      <rect>
@@ -1481,51 +1384,6 @@
      <string>Data control periò.:</string>
     </property>
    </widget>
-   <widget class="QDateEdit" name="data_control_periodic">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>260</y>
-      <width>101</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Verdana</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>true</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="locale">
-     <locale language="Catalan" country="Spain"/>
-    </property>
-    <property name="minimumDateTime">
-     <datetime>
-      <hour>0</hour>
-      <minute>0</minute>
-      <second>0</second>
-      <year>1900</year>
-      <month>1</month>
-      <day>1</day>
-     </datetime>
-    </property>
-    <property name="displayFormat">
-     <string>dd/MM/yyyy</string>
-    </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
-    </property>
-    <property name="date">
-     <date>
-      <year>1999</year>
-      <month>1</month>
-      <day>1</day>
-     </date>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="num_exp">
     <property name="enabled">
      <bool>true</bool>
@@ -1534,7 +1392,7 @@
      <rect>
       <x>130</x>
       <y>20</y>
-      <width>121</width>
+      <width>111</width>
       <height>20</height>
      </rect>
     </property>
@@ -1574,51 +1432,6 @@
      <string>Data de baixa:</string>
     </property>
    </widget>
-   <widget class="QDateEdit" name="data_baixa">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>230</y>
-      <width>101</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Verdana</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>true</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="locale">
-     <locale language="Catalan" country="Spain"/>
-    </property>
-    <property name="minimumDateTime">
-     <datetime>
-      <hour>0</hour>
-      <minute>0</minute>
-      <second>0</second>
-      <year>1900</year>
-      <month>1</month>
-      <day>1</day>
-     </datetime>
-    </property>
-    <property name="displayFormat">
-     <string>dd/MM/yyyy</string>
-    </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
-    </property>
-    <property name="date">
-     <date>
-      <year>1999</year>
-      <month>1</month>
-      <day>1</day>
-     </date>
-    </property>
-   </widget>
    <widget class="QTextEdit" name="observacions_act">
     <property name="geometry">
      <rect>
@@ -1635,16 +1448,16 @@
      </font>
     </property>
    </widget>
-   <widget class="QLineEdit" name="data_llicencia_null">
+   <widget class="QLineEdit" name="data_llicencia">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>132</x>
-      <y>232</y>
-      <width>80</width>
-      <height>18</height>
+      <x>130</x>
+      <y>230</y>
+      <width>111</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -1658,20 +1471,26 @@
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="maxLength">
+     <number>10</number>
+    </property>
     <property name="frame">
+     <bool>true</bool>
+    </property>
+    <property name="clearButtonEnabled">
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="data_control_inicial_null">
+   <widget class="QLineEdit" name="data_control_inicial">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>132</x>
-      <y>262</y>
-      <width>80</width>
-      <height>18</height>
+      <x>130</x>
+      <y>260</y>
+      <width>111</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -1682,23 +1501,29 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="maxLength">
+     <number>10</number>
+    </property>
     <property name="frame">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="data_control_periodic_null">
+   <widget class="QLineEdit" name="data_baixa">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>402</x>
-      <y>262</y>
-      <width>80</width>
-      <height>18</height>
+      <x>400</x>
+      <y>230</y>
+      <width>101</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -1709,23 +1534,29 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="maxLength">
+     <number>10</number>
+    </property>
     <property name="frame">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="data_baixa_null">
+   <widget class="QLineEdit" name="data_control_periodic">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>402</x>
-      <y>232</y>
-      <width>80</width>
-      <height>18</height>
+      <x>400</x>
+      <y>260</y>
+      <width>101</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -1736,11 +1567,17 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <property name="locale">
      <locale language="Catalan" country="Spain"/>
     </property>
+    <property name="maxLength">
+     <number>10</number>
+    </property>
     <property name="frame">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

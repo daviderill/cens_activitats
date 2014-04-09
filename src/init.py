@@ -42,10 +42,6 @@ def formOpen(dialog,layerid,featureid):
     _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)	
     _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)	
     _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)	
-    _dialog.findChild(QDateEdit, "data_llicencia").dateChanged.connect(dateChanged)    
-    _dialog.findChild(QDateEdit, "data_baixa").dateChanged.connect(dateChanged)    
-    _dialog.findChild(QDateEdit, "data_control_inicial").dateChanged.connect(dateChanged)    
-    _dialog.findChild(QDateEdit, "data_control_periodic").dateChanged.connect(dateChanged)    
     
     # Connect to Database
     connectDb()
@@ -65,7 +61,6 @@ def connectDb():
     
     global conn, cursor
     conn = sqlite3.connect(db_file)
-    #conn.text_factory = sqlite3.OptimizedUnicode	
     cursor = conn.cursor()	
     setCursor(cursor)		
 
@@ -104,7 +99,6 @@ def updateTotals():
     row_total = getTotal()	
     if (row_total > 0):
         row_cur = 1	
-    #lbl_info.setText("Activitat "+str(row_cur)+" de "+str(row_total)) 
     enable_previous = (row_cur > 1)
     enable_next = (row_total > row_cur)      
     _dialog.findChild(QPushButton, "previous").setEnabled(enable_previous) 
@@ -167,7 +161,6 @@ def loadActivity():
     sql+= " FROM activitat WHERE emplacament_id = '"+id.text()+"' ORDER BY id DESC"
     sql+= " LIMIT 1 OFFSET "+str(row_cur-1)
     cursor.execute(sql)
-    #print sql	
     lbl_info.setText("Activitat "+str(row_cur)+" de "+str(row_total))	
     row = cursor.fetchone()		
     if row:	
@@ -254,30 +247,16 @@ def setCombo(row, index, field):
 
 def setDate(row, index, field):
     
-    aux = _dialog.findChild(QDateEdit, field)   
+    aux = _dialog.findChild(QLineEdit, field)   
     if not aux:
         print "date not found: " + field	
         return	 
     if row[index] and row[index] != "1900-01-01":	
-        date = datetime.strptime(row[index], "%Y-%m-%d")			
-        widget_line_visible = False
+        date_aux = datetime.strptime(row[index], "%Y-%m-%d")
+        date_text = date_aux.strftime("%d/%m/%Y")
     else:
-        date = datetime.strptime("1900-01-01", "%Y-%m-%d")    				
-        widget_line_visible = True        
-    aux.setDate(date);	
-    
-    widget_line = _dialog.findChild(QLineEdit, field+"_null") 
-    if widget_line:
-        #print field + ": " + str(widget_line_visible) 
-        widget_line.setVisible(widget_line_visible)      
-
-
-def dateChanged():
-    
-    widget_date = _dialog.sender()
-    widget_line = _dialog.findChild(QLineEdit, widget_date.objectName()+"_null")    
-    if widget_line:
-        widget_line.setVisible(not widget_date.text())   
+        date_text = ""    				     
+    aux.setText(date_text);	
     
     
 def createActivity():
@@ -342,6 +321,24 @@ def deleteActivity():
         updateTotals()	
 
 
+def manageDate(widget):
+
+    try:    
+        date_widget = _dialog.findChild(QLineEdit, widget)
+        aux = date_widget.text().replace("-", "/") 
+        if aux:   
+            date_aux = datetime.strptime(aux, "%d/%m/%Y")
+            value = date_aux.strftime("%Y-%m-%d")
+            text = widget+"='"+value+"', "  
+        else:
+            value = "null"
+            text = widget+"=null, "              
+    except ValueError:
+        value = "null"
+        text = "" 
+    return dict(value = value, text = text)
+
+
 # Save data from Tab 'Activities' into Database
 def saveActivity(update):
  
@@ -349,19 +346,12 @@ def saveActivity(update):
     if not act_id.text():
         return
     
-    dllic = _dialog.findChild(QDateEdit, "data_llicencia")	
-    dllic_value = dllic.date().toString("yyyy-MM-dd")
-    dllic_text = "data_llicencia = '"+dllic_value+"'"	
-    dbaixa = _dialog.findChild(QDateEdit, "data_baixa")	
-    dbaixa_value = dbaixa.date().toString("yyyy-MM-dd")
-    dbaixa_text = "data_baixa = '"+dbaixa_value+"'"		
-    dci = _dialog.findChild(QDateEdit, "data_control_inicial")	
-    dci_value = dci.date().toString("yyyy-MM-dd")
-    dci_text = "data_control_inicial = '"+dci_value+"'"	
-    dcp = _dialog.findChild(QDateEdit, "data_control_periodic")	
-    dcp_value = dcp.date().toString("yyyy-MM-dd")
-    dcp_text = "data_control_periodic = '"+dcp_value+"'"	
-
+    dllic = manageDate("data_llicencia")
+    dbaixa = manageDate("data_baixa")
+    dci = manageDate("data_control_inicial")
+    dcp = manageDate("data_control_periodic")
+    print dbaixa["text"]
+        
     chk_actual = _dialog.findChild(QCheckBox, "actual")	
     actual_value = chk_actual.isChecked()
     if actual_value:	
@@ -383,8 +373,10 @@ def saveActivity(update):
 
     # Create SQL
     sql = "UPDATE activitat"
-    sql+= " SET "+getStringValue("nif")+", "+getStringValue("rao_social")+", "+getStringValue("nom_comercial")+", "+getStringValue("descripcio")+", "+getStringValue("nom_contacte")+", "+getStringValue("telefon")+", "+getStringValue("mail")+", "+getStringValue("superficie")+", "+getStringValue("exp_relacionats")+", "+dllic_text+", "+dbaixa_text+", "+dci_text+", "+dcp_text
-    sql+= ", "+getSelectedItem("estat_legal_id")+", "+getSelectedItem("tipus_act_id")+", "+getSelectedItem("marc_legal_id")+", "+getSelectedItem("clas_legal_id")+", "+getStringValue("codi_legal")+", "+getStringValue("observacions_act")+", "+getStringValue("num_exp")+", "+actual_text+", "+data_modif_text
+    sql+= " SET "+getStringValue("nif")+", "+getStringValue("rao_social")+", "+getStringValue("nom_comercial")+", "+getStringValue("descripcio")+", "+getStringValue("nom_contacte") 
+    sql+= ", "+getStringValue("telefon")+", "+getStringValue("mail")+", "+getStringValue("superficie")+", "+getStringValue("exp_relacionats")+", "+dllic["text"]+dbaixa["text"]+dci["text"]+dcp["text"]
+    sql+= getSelectedItem("estat_legal_id")+", "+getSelectedItem("tipus_act_id")+", "+getSelectedItem("marc_legal_id")+", "+getSelectedItem("clas_legal_id") 
+    sql+= ", "+getStringValue("codi_legal")+", "+getStringValue("observacions_act")+", "+getStringValue("num_exp")+", "+actual_text+", "+data_modif_text
     # Update location?
     if new_emp_text:
         msgBox = QMessageBox()
@@ -395,14 +387,16 @@ def saveActivity(update):
         resp = msgBox.exec_()
         if (resp == QMessageBox.Yes):        
             sql+= ", "+new_emp_text
-    sql+= " WHERE id = "+act_id.text()
-    #print sql		
+    sql+= " WHERE id = "+act_id.text()		
     cursor.execute(sql)
     
     if cursor.rowcount == 0:	
-        sql = "INSERT INTO activitat (emplacament_id, nif, rao_social, nom_comercial, descripcio, nom_contacte, telefon, mail, superficie, exp_relacionats, data_llicencia, data_baixa, data_control_inicial, data_control_periodic, estat_legal_id, tipus_act_id, marc_legal_id, clas_legal_id, codi_legal, observacions_act, num_exp, actual)"
-        sql+= " VALUES ("+emp_value+", "+getStringValue2("nif")+", "+getStringValue2("rao_social")+", "+getStringValue2("nom_comercial")+", "+getStringValue2("descripcio")+", "+getStringValue2("nom_contacte")+", "+getStringValue2("telefon")+", "+getStringValue2("mail")+", "+getStringValue2("superficie")+", "+getStringValue2("exp_relacionats")+", '"+dllic_value+"', '"+dbaixa_value+"', '"+dci_value+"', '"+dcp_value+"', "+getSelectedItem2("estat_legal_id")+", "+getSelectedItem2("tipus_act_id")+", "+getSelectedItem2("marc_legal_id")+", "+getSelectedItem2("clas_legal_id")+", "+getStringValue2("codi_legal")+", "+getStringValue2("observacions_act")+", "+getStringValue2("num_exp")+", "+str(actual_value)+")"			
-        #print sql				
+        sql = "INSERT INTO activitat (emplacament_id, nif, rao_social, nom_comercial, descripcio, nom_contacte, telefon, mail, superficie, exp_relacionats," 
+        sql+= " data_llicencia, data_baixa, data_control_inicial, data_control_periodic, estat_legal_id, tipus_act_id, marc_legal_id, clas_legal_id, codi_legal, observacions_act, num_exp, actual)"
+        sql+= " VALUES ("+emp_value+", "+getStringValue2("nif")+", "+getStringValue2("rao_social")+", "+getStringValue2("nom_comercial")+", "+getStringValue2("descripcio")
+        sql+= ", "+getStringValue2("nom_contacte")+", "+getStringValue2("telefon")+", "+getStringValue2("mail")+", "+getStringValue2("superficie")+", "+getStringValue2("exp_relacionats")
+        sql+= ", '"+dllic["value"]+"', '"+dbaixa["value"]+"', '"+dci["value"]+"', '"+dcp["value"]+"', "+getSelectedItem2("estat_legal_id")+", "+getSelectedItem2("tipus_act_id")
+        sql+= ", "+getSelectedItem2("marc_legal_id")+", "+getSelectedItem2("clas_legal_id")+", "+getStringValue2("codi_legal")+", "+getStringValue2("observacions_act")+", "+getStringValue2("num_exp")+", "+str(actual_value)+")"						
         cursor.execute(sql)		
     conn.commit()	
 
