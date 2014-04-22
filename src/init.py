@@ -29,7 +29,7 @@ def formOpen(dialog,layerid,featureid):
         emp_updating = False
     
     # Get current path
-    db_file = current_path+"/cens_2013.sqlite"	
+    db_file = current_path+"/cens_2014.sqlite"	
     photo_folder = current_path+"/fotos/"		
 
     # Wire up our own signals
@@ -251,7 +251,9 @@ def setDate(row, index, field):
     if not aux:
         print "date not found: " + field	
         return	 
-    if row[index] and row[index] != "1900-01-01":	
+    value = unicode(row[index])    
+    #print field + ": " + value      
+    if value != 'null' and value != 'None' and value != '1900-01-01':   
         date_aux = datetime.strptime(row[index], "%Y-%m-%d")
         date_text = date_aux.strftime("%d/%m/%Y")
     else:
@@ -280,19 +282,15 @@ def createActivity():
     _dialog.findChild(QLineEdit, "num_exp").setText("")
     _dialog.findChild(QLineEdit, "codi_legal").setText("")	
     _dialog.findChild(QTextEdit, "observacions_act").setText("")	
+    _dialog.findChild(QLineEdit, "num_exp").setText("")            
     _dialog.findChild(QComboBox, "estat_legal_id").setCurrentIndex(-1)
     _dialog.findChild(QComboBox, "tipus_act_id").setCurrentIndex(-1)
     _dialog.findChild(QComboBox, "marc_legal_id").setCurrentIndex(-1)
     _dialog.findChild(QComboBox, "clas_legal_id").setCurrentIndex(-1)
-
-    # Get current date
-    current_date = time.strftime("%Y-%m-%d")
-    date = datetime.strptime(current_date, "%Y-%m-%d")
-    _dialog.findChild(QDateEdit, "data_llicencia").setDate(date);	 
-    _dialog.findChild(QDateEdit, "data_baixa").setDate(date);	 	
-    _dialog.findChild(QDateEdit, "data_control_inicial").setDate(date);	    
-    _dialog.findChild(QDateEdit, "data_control_periodic").setDate(date);	    	
-    _dialog.findChild(QLineEdit, "num_exp").setText("")		
+    _dialog.findChild(QLineEdit, "data_llicencia").setText("")  	 
+    _dialog.findChild(QLineEdit, "data_baixa").setText("")  	 	
+    _dialog.findChild(QLineEdit, "data_control_inicial").setText("")  	    
+    _dialog.findChild(QLineEdit, "data_control_periodic").setText("")  	    	
 
 
 def duplicateActivity():
