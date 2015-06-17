@@ -54,6 +54,7 @@ def formOpen(dialog,layerid,featureid):
 
     # Disable and set invisible some controls		
     disableControls()
+    _dialog.hideButtonBox()    	
 
 
 # Connect to Database	
@@ -433,5 +434,5 @@ def saveClicked():
     
     
 def closeForm():
-    _dialog.reject()  
+    _dialog.parent().setVisible(False)
     
