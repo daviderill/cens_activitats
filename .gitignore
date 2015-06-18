@@ -2,6 +2,7 @@
 ## Eclipse
 #################
 
+build_*.xml
 *.pydevproject
 .project
 .metadata
@@ -60,7 +61,8 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-*.qgs
+*.qgs*
 *.sqlite
 *.autosave
 *.bat
+reports/

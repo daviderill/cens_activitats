@@ -1,5 +1,7 @@
 ﻿from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from qgis.core import *
+from qgis.utils import iface
 from utils import *
 from datetime import datetime
 import time
@@ -10,53 +12,43 @@ from photo_dialog import PhotoDialog
 
 def formOpen(dialog,layerid,featureid):
 
-    global _dialog, id, cbo_marc_legal, lbl_info
-    global db_file, photo_folder, emp_updating
-    global current_path
-
-    # Set global variables	
-    _dialog = dialog
-    setDialog(dialog)	
-    id = _dialog.findChild(QLineEdit, "id")		
-    cbo_marc_legal = _dialog.findChild(QComboBox, "marc_legal_id")	
-    lbl_info = _dialog.findChild(QLabel, "lbl_info")		
-    current_path = os.path.dirname(os.path.abspath(__file__))
+    global _dialog, _iface, current_path, current_date, db_file, photo_folder, report_folder
+    global MSG_DURATION
     
-    # Enable modification of activities, only if location is already created
-    if id.text():
-        emp_updating = True    
+    # Check if it is the first time we execute this module
+    if isFirstTime():
+          
+        # Get current path and save reference to the QGIS interface
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        date_aux = time.strftime("%d/%m/%Y")
+        current_date = datetime.strptime(date_aux, "%d/%m/%Y")       
+        db_file = current_path+"/cens_2014.sqlite"    
+        photo_folder = current_path+"/fotos/"        
+        report_folder = current_path+"/reports/"              
+        _iface = iface        
+        setInterface(iface)  
+        
+        # Set constants
+        MSG_DURATION = 5
+
+        # Connect to Database (only once, when loading map)
+        showInfo("Attempting to connect to DB")
+        connectDb()
+
+    # If not, close previous dialog    if already opened
     else:
-        emp_updating = False
+        if _dialog.isVisible():
+            _dialog.parent().setVisible(False)            
+       
+    # Get dialog and his widgets
+    _dialog = dialog
+    setDialog(dialog)        
+    widgetsToGlobal()    
+
+    # Initial configuration
+    initConfig()
+        
     
-    # Get current path
-    db_file = current_path+"/cens_2014.sqlite"	
-    photo_folder = current_path+"/fotos/"		
-
-    # Wire up our own signals
-    cbo_marc_legal.currentIndexChanged.connect(marcLegalChanged)		      
-    _dialog.findChild(QPushButton, "previous").clicked.connect(previousRecord)	
-    _dialog.findChild(QPushButton, "next").clicked.connect(nextRecord)	
-    _dialog.findChild(QPushButton, "create_act").clicked.connect(createActivity)	
-    _dialog.findChild(QPushButton, "duplicate_act").clicked.connect(duplicateActivity)		
-    _dialog.findChild(QPushButton, "save_act").clicked.connect(saveClicked)	
-    _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)	
-    _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)	
-    _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)	
-    
-    # Connect to Database
-    connectDb()
-
-    # Tab 'activities': Load related combos 
-    loadActivityCombos()
-
-    # Get number of activitites related to current emplacament
-    updateTotals()	
-
-    # Disable and set invisible some controls		
-    disableControls()
-    _dialog.hideButtonBox()    	
-
-
 # Connect to Database	
 def connectDb():
     
@@ -64,11 +56,59 @@ def connectDb():
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()	
     setCursor(cursor)		
+    
+    
+def widgetsToGlobal():
 
+    global id, cbo_marc_legal, lbl_info, emp_updating
+
+    id = _dialog.findChild(QLineEdit, "id")        
+    cbo_marc_legal = _dialog.findChild(QComboBox, "marc_legal_id")    
+    lbl_info = _dialog.findChild(QLabel, "lbl_info")        
+    # Enable modification of activities, only if location is already created
+    if id.text():
+        emp_updating = True    
+    else:
+        emp_updating = False        
+    
+
+def initConfig():    
+    
+    # Wire up our own signals
+    setSignals()    
+
+    # Tab 'activities': Load related combos 
+    loadActivityCombos()
+
+    # Get number of activitites related to current emplacament
+    updateTotals()    
+
+    # Disable and set invisible some controls        
+    disableControls()
+    
+    # Refresh map
+    _iface.mapCanvas().refresh()    
+    
+
+# Wire up our own signals    
+def setSignals():
+  
+    cbo_marc_legal.currentIndexChanged.connect(marcLegalChanged)              
+    _dialog.findChild(QPushButton, "previous").clicked.connect(previousRecord)    
+    _dialog.findChild(QPushButton, "next").clicked.connect(nextRecord)    
+    _dialog.findChild(QPushButton, "create_act").clicked.connect(createActivity)    
+    _dialog.findChild(QPushButton, "duplicate_act").clicked.connect(duplicateActivity)        
+    _dialog.findChild(QPushButton, "save_act").clicked.connect(saveClicked)    
+    _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)    
+    _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)
+    _dialog.findChild(QPushButton, "report").clicked.connect(openReport)    
+    _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)    
+    
 
 # Disable and set invisible some controls	
 def disableControls():
 
+    _dialog.hideButtonBox()        
     _dialog.findChild(QLineEdit, "id").setEnabled(False)
     _dialog.findChild(QLineEdit, "act_id").setEnabled(False)	
     _dialog.findChild(QGroupBox, "gb_activitat").setEnabled(emp_updating)       
@@ -76,8 +116,7 @@ def disableControls():
     _dialog.findChild(QPushButton, "create_act").setEnabled(emp_updating)      
     _dialog.findChild(QPushButton, "duplicate_act").setEnabled(emp_updating)   
     _dialog.findChild(QPushButton, "del_act").setEnabled(emp_updating)  
-    _dialog.findChild(QPushButton, "photo_act").setEnabled(emp_updating)   
-    _dialog.findChild(QPushButton, "report").setVisible(False)   
+    _dialog.findChild(QPushButton, "photo_act").setEnabled(emp_updating)    
 
 
 # Load combos from domain tables	
@@ -423,6 +462,41 @@ def viewPhoto():
     photo_dialog = PhotoDialog()
     photo_dialog.setPhoto(path)    	
     photo_dialog.exec_()	
+    
+
+def openReport():
+    
+    # myComposition -> QgsComposition
+    myComposition = _iface.activeComposers()[0].composition()   
+    
+    # myAtlasMap -> QgsComposerMap
+    # Get map composition and define scale 
+    #myAtlasMap = myComposition.getComposerMapById(0) 
+    #myAtlasMap.setNewScale(3000) 
+            
+    # myAtlas -> QgsAtlasComposition
+    myComposition.setAtlasMode(QgsComposition.ExportAtlas)         
+    myAtlas = myComposition.atlasComposition() 
+    myAtlas.setFeatureFilter("emp_id = "+str(id.text()))     
+    myAtlas.setFilenamePattern("emp_id")          
+    myAtlas.setSingleFile(False)
+   
+    # Generate atlas 
+    print "num. features: "+str(myAtlas.numFeatures())    
+    myAtlas.beginRender() 
+    for i in range(0, myAtlas.numFeatures()): 
+        #print "feature: "+str(i)            
+        myAtlas.prepareForFeature(i)       
+        filePath = report_folder+myAtlas.currentFilename()+".pdf"
+        print "filePath: "+filePath         
+        result = myComposition.exportAsPDF(filePath)        
+        if result:
+            showInfo("PDF generated in: "+filePath)
+            os.startfile(filePath)        
+        else:
+            showWarning("PDF could not be generated in: "+filePath)               
+        
+    myAtlas.endRender()  
      
 
 def saveClicked():
@@ -435,4 +509,5 @@ def saveClicked():
     
 def closeForm():
     _dialog.parent().setVisible(False)
+   
     

@@ -1,6 +1,6 @@
 ﻿from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
+from qgis.gui import QgsMessageBar
 
 #	
 # Utility funcions	
@@ -9,6 +9,23 @@ def setDialog(p_dialog):
     
     global _dialog
     _dialog = p_dialog
+ 
+         
+def setInterface(p_iface):
+    
+    global _iface, MSG_DURATION
+    _iface = p_iface
+    MSG_DURATION = 5        
+ 
+    
+def isFirstTime():
+    
+    global first
+    if not 'first' in globals():
+        first = True
+    else:    
+        first = False
+    return first
 
 
 def setCursor(p_cursor):
@@ -134,4 +151,20 @@ def isNull(param_elem):
         if elem.text():
             empty = False
     return empty	
+
+
+def showInfo(text, duration = None):
+    
+    if duration is None:
+        _iface.messageBar().pushMessage("", text, QgsMessageBar.INFO, MSG_DURATION)  
+    else:
+        _iface.messageBar().pushMessage("", text, QgsMessageBar.INFO, duration)              
+    
+def showWarning(text, duration = None):
+    
+    if duration is None:
+        _iface.messageBar().pushMessage("", text, QgsMessageBar.WARNING, MSG_DURATION)  
+    else:
+        _iface.messageBar().pushMessage("", text, QgsMessageBar.WARNING, duration)   
+
 
