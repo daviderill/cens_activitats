@@ -14,6 +14,9 @@ def formOpen(dialog,layerid,featureid):
 
     global _dialog, _iface, current_path, current_date, db_file, photo_folder, report_folder
     global MSG_DURATION
+    DB_NAME = "/cens_2014.sqlite"
+    FOLDER_PHOTOS = "/fotos/"
+    FOLDER_REPORTS = "/reports/"
     
     # Check if it is the first time we execute this module
     if isFirstTime():
@@ -22,9 +25,9 @@ def formOpen(dialog,layerid,featureid):
         current_path = os.path.dirname(os.path.abspath(__file__))
         date_aux = time.strftime("%d/%m/%Y")
         current_date = datetime.strptime(date_aux, "%d/%m/%Y")       
-        db_file = current_path+"/cens_2014.sqlite"    
-        photo_folder = current_path+"/fotos/"        
-        report_folder = current_path+"/reports/"              
+        db_file = current_path+DB_NAME 
+        photo_folder = current_path+FOLDER_PHOTOS     
+        report_folder = current_path+FOLDER_REPORTS            
         _iface = iface        
         setInterface(iface)  
         
@@ -101,7 +104,7 @@ def setSignals():
     _dialog.findChild(QPushButton, "save_act").clicked.connect(saveClicked)    
     _dialog.findChild(QPushButton, "del_act").clicked.connect(deleteActivity)    
     _dialog.findChild(QPushButton, "photo_act").clicked.connect(viewPhoto)
-    _dialog.findChild(QPushButton, "report").clicked.connect(openReport)    
+    _dialog.findChild(QPushButton, "open_report").clicked.connect(openReport)    
     _dialog.findChild(QPushButton, "close").clicked.connect(closeForm)    
     
 
@@ -468,27 +471,20 @@ def openReport():
     
     # myComposition -> QgsComposition
     myComposition = _iface.activeComposers()[0].composition()   
-    
-    # myAtlasMap -> QgsComposerMap
-    # Get map composition and define scale 
-    #myAtlasMap = myComposition.getComposerMapById(0) 
-    #myAtlasMap.setNewScale(3000) 
             
     # myAtlas -> QgsAtlasComposition
     myComposition.setAtlasMode(QgsComposition.ExportAtlas)         
     myAtlas = myComposition.atlasComposition() 
-    myAtlas.setFeatureFilter("emp_id = "+str(id.text()))     
+    filter = "emp_id = "+str(id.text())
+    myAtlas.setFeatureFilter(filter)     
     myAtlas.setFilenamePattern("emp_id")          
     myAtlas.setSingleFile(False)
    
-    # Generate atlas 
-    print "num. features: "+str(myAtlas.numFeatures())    
+    # Generate atlas    
     myAtlas.beginRender() 
-    for i in range(0, myAtlas.numFeatures()): 
-        #print "feature: "+str(i)            
+    for i in range(0, myAtlas.numFeatures()):       
         myAtlas.prepareForFeature(i)       
         filePath = report_folder+myAtlas.currentFilename()+".pdf"
-        print "filePath: "+filePath         
         result = myComposition.exportAsPDF(filePath)        
         if result:
             showInfo("PDF generated in: "+filePath)
